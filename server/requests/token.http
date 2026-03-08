@@ -1,0 +1,3 @@
+@baseurl = https://pokeapi.co/api/v2/pokemon/ditto
+
+GET {{baseurl}}
