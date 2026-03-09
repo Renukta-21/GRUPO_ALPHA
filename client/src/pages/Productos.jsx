@@ -137,7 +137,7 @@ function Productos({ searchQuery }) {
     if (categoria) params.append('categoria', categoria)
     params.append('pagina', pagina)
 
-    fetch(`http://localhost:3000/api/syscom/products?${params}`)
+    fetch(`${import.meta.env.VITE_API_URL}/products?${params}`)
       .then(res => res.json())
       .then(data => {
         setProductos(prev =>
