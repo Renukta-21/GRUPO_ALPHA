@@ -25,3 +25,4 @@ dist-ssr
 
 rest-client.env.json
 server/requests/token.http
+server/requests/
