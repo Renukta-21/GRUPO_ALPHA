@@ -11,7 +11,7 @@ export const useCategorias = () => {
 
     setLoading(true)
     try {
-      const res = await fetch('http://localhost:3000/api/syscom/categories')
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/categories`)
       const data = await res.json()
       cache['root'] = data  
       return data
@@ -23,11 +23,11 @@ export const useCategorias = () => {
   }
 
   const getSubcategorias = async (id) => {
-    if (cache[id]) return cache[id]  // 👈 ya lo tiene, no fetcha
+    if (cache[id]) return cache[id] 
 
     setLoading(true)
     try {
-      const res = await fetch(`http://localhost:3000/api/syscom/categories/${id}`)
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/categories/${id}`)
       const data = await res.json()
       cache[id] = data.subcategorias  
       return data.subcategorias
