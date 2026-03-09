@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 
 rest-client.env.json
+server/requests/token.http

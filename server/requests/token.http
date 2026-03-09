@@ -1,3 +1,6 @@
-@baseurl = https://pokeapi.co/api/v2/pokemon/ditto
+### Obtener token
+# @name getToken
+POST {{tokenBaseUrl}}
+Content-Type: application/x-www-form-urlencoded
 
-GET {{baseurl}}
+client_id={{CLIENT_ID}}&client_secret={{SECRET_KEY}}&grant_type=client_credentials
