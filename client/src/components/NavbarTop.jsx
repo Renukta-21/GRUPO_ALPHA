@@ -12,7 +12,7 @@ function Navbar() {
             <div className="flex justify-between items-center py-3">
                 <div className="flex align-center">
                     <button className="cursor-pointer" onClick={() => setMenuOpen(!menuOpen)}>
-                        <RxHamburgerMenu />
+                        <RxHamburgerMenu  className="text-white"/>
                     </button>
                     <img src={logoDark} alt="" className="w-40" />
                 </div>

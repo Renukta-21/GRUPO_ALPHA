@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/NavbarTop'
 import Searchbar from './components/Searchbar'
 import Productos from './pages/Productos'
+import ProductoDetalle from './components/ProductoDetalle'
 
 function AppContent() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -20,6 +21,7 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<h1 className="text-white">Home</h1>} />
           <Route path="/productos" element={<Productos />} />
+          <Route path="/producto/:id" element={<ProductoDetalle />} />
         </Routes>
       )}
     </div>

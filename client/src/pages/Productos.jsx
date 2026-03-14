@@ -10,7 +10,7 @@ function useDebounce(value, delay) {
   return debounced
 }
 
-// Breadcrumb navegable — cada item tiene label, id y path
+
 function Breadcrumb({ items }) {
   const navigate = useNavigate()
   if (!items.length) return null
@@ -25,7 +25,7 @@ function Breadcrumb({ items }) {
       </span>
       {items.map((item, i) => {
         const isLast = i === items.length - 1
-        // El path de cada item es todos los breadcrumbs hasta este nivel
+        
         const slicedBreadcrumb = items.slice(0, i + 1).map(x => `${x.label}:${x.id}`).join('›')
         const path = `/productos?categoria=${item.id}&nombre=${encodeURIComponent(item.label)}&breadcrumb=${encodeURIComponent(slicedBreadcrumb)}`
 
@@ -50,8 +50,14 @@ function Breadcrumb({ items }) {
 }
 
 function ProductCard({ producto }) {
+  const navigate = useNavigate() // 👈 agregar
+
   return (
-    <div className="bg-slate-800 rounded-xl overflow-hidden flex flex-col">
+    <div
+      onClick={() => navigate(`/producto/${producto.producto_id}`)} // 👈 agregar
+      className="bg-slate-800 rounded-xl overflow-hidden flex flex-col cursor-pointer hover:ring-2 hover:ring-blue-500 transition" // 👈 agregar cursor-pointer y hover
+    >
+      {/* todo lo demás exactamente igual */}
       <div className="bg-white rounded-t-xl p-3">
         <img
           src={producto.img_portada}
@@ -105,10 +111,9 @@ function Productos({ searchQuery }) {
   const busqueda = searchQuery || searchParams.get('busqueda')
   const categoria = searchParams.get('categoria')
   const nombre = searchParams.get('nombre')
-  const breadcrumbParam = searchParams.get('breadcrumb') // "Audio y Video:66523›Audio IP:XXXX"
+  const breadcrumbParam = searchParams.get('breadcrumb') 
   const debouncedBusqueda = useDebounce(busqueda, 400)
 
-  // Parsea breadcrumb: "Audio y Video:66523›Audio IP:XXXX" → [{label, id}]
   const breadcrumbItems = (() => {
     if (!breadcrumbParam) return nombre ? [{ label: nombre, id: categoria }] : []
     return breadcrumbParam.split('›').filter(Boolean).map(part => {

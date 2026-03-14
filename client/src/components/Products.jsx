@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom' // 👈 agregado
 
 function Productos() {
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate() // 👈 agregado
   const [productos, setProductos] = useState([])
   const [loading, setLoading] = useState(false)
 
@@ -11,7 +12,6 @@ function Productos() {
 
   useEffect(() => {
     if (!busqueda && !categoria) return
-
     setLoading(true)
     const params = new URLSearchParams()
     if (busqueda) params.append('busqueda', busqueda)
@@ -32,7 +32,11 @@ function Productos() {
       </h1>
       <div className="grid grid-cols-3 gap-4">
         {productos.map(p => (
-          <div key={p.producto_id} className="bg-slate-800 p-4 rounded">
+          <div
+            key={p.producto_id}
+            className="bg-slate-800 p-4 rounded cursor-pointer hover:ring-2 hover:ring-blue-500 transition"
+            onClick={() => navigate(`/producto/${p.producto_id}`)} 
+          >
             <img src={p.img_portada} alt={p.titulo} className="w-full" />
             <p className="mt-2 text-sm">{p.titulo}</p>
             <p className="text-blue-400">${p.precios.precio_especial}</p>
