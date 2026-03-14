@@ -141,7 +141,6 @@ export default function ProductoDetalle() {
           ))}
         </div>
 
-        {/* Imagen principal */}
         <div className="flex-1 bg-slate-800 rounded-xl overflow-hidden flex items-center justify-center" style={{ minHeight: '320px', maxHeight: '420px' }}>
           <img
             key={imagenActiva}
@@ -164,8 +163,6 @@ export default function ProductoDetalle() {
 function InfoProducto({ producto }) {
   return (
     <div className="flex flex-col gap-4">
-
-      {/* Marca + título */}
       <div>
         {producto.marca_logo && (
           <img
@@ -190,8 +187,6 @@ function InfoProducto({ producto }) {
           </span>
         )}
       </div>
-
-      {/* Características */}
       {producto.caracteristicas?.length > 0 && (
         <ul className="flex flex-col gap-1.5">
           {producto.caracteristicas.map((c, i) => (

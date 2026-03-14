@@ -1,15 +1,33 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { IoSearchSharp, IoCloseCircle } from 'react-icons/io5'
 
-function Searchbar({ onSearch }) {
+function Searchbar({ onSearch, searchQuery }) {
   const [query, setQuery] = useState('')
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // Sincroniza el input si searchQuery se limpia desde afuera (ej: navegar a home)
+  useEffect(() => {
+    if (searchQuery === '') setQuery('')
+  }, [searchQuery])
+
+  // Limpia el search al navegar a una ruta de producto o categoría
+  useEffect(() => {
+    if (location.pathname.startsWith('/producto/')) {
+      setQuery('')
+      onSearch?.('')
+    }
+  }, [location.pathname])
 
   const handleChange = (e) => {
     const val = e.target.value
     setQuery(val)
-    if (onSearch) onSearch(val)  // live search mientras escribe
+    onSearch?.(val)
+    // Si escribe, asegura estar en '/' para ver los resultados en vivo
+    if (val && location.pathname !== '/') {
+      navigate('/')
+    }
   }
 
   const handleSubmit = (e) => {
@@ -20,7 +38,7 @@ function Searchbar({ onSearch }) {
 
   const clear = () => {
     setQuery('')
-    if (onSearch) onSearch('')
+    onSearch?.('')
   }
 
   return (
