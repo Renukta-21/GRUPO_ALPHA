@@ -201,9 +201,9 @@ function InfoProducto({ producto, onVerDisponibilidad }) {
         >
           🏬 Ver disponibilidad
         </button>
-        <button className="flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white text-sm font-medium rounded-lg transition-colors">
+        {/* <button className="flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white text-sm font-medium rounded-lg transition-colors">
           🛒 Agregar
-        </button>
+        </button> */}
       </div>
 
       {/* Recursos */}
