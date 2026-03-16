@@ -143,17 +143,18 @@ export default function ProductoDetalle() {
 }
 
 function InfoProducto({ producto, onVerDisponibilidad }) {
-  const { agregar, setOpen } = useCart()
+  const { agregar, setOpen, items } = useCart()
   const [cantidad, setCantidad] = useState(1)
-  const [agregado, setAgregado] = useState(false)
+
+  const yaEnCarrito = items.some(i => i.producto_id === producto.producto_id)
 
   const handleAgregar = () => {
+    if (yaEnCarrito) {
+      setOpen(true)
+      return
+    }
     agregar(producto, cantidad)
-    setAgregado(true)
-    setTimeout(() => {
-      setAgregado(false)
-      setOpen(true)   // abre el drawer automáticamente
-    }, 800)
+    setOpen(true)
   }
 
   return (
@@ -202,22 +203,20 @@ function InfoProducto({ producto, onVerDisponibilidad }) {
         <button
           onClick={handleAgregar}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all ${
-            agregado
-              ? 'bg-green-500 text-white scale-95'
+            yaEnCarrito
+              ? 'bg-green-500 text-white'
               : 'bg-amber-400 hover:bg-amber-300 text-black'
           }`}
         >
-          {agregado ? (
+          {yaEnCarrito ? (
             <>
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              ¡Agregado!
+              Ver carrito
             </>
           ) : (
-            <>
-              🛒 Agregar al carrito
-            </>
+            <>🛒 Agregar al carrito</>
           )}
         </button>
       </div>

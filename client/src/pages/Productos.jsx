@@ -51,15 +51,14 @@ function Breadcrumb({ items }) {
 
 function ProductCard({ producto }) {
   const navigate = useNavigate()
-  const { agregar, setOpen } = useCart()
+  const { agregar, items } = useCart()
   const [modalProducto, setModalProducto] = useState(null)
-  const [agregado, setAgregado] = useState(false)
+
+  const yaEnCarrito = items.some(i => i.producto_id === producto.producto_id)
 
   const handleAgregar = (e) => {
     e.stopPropagation()
-    agregar(producto)
-    setAgregado(true)
-    setTimeout(() => setAgregado(false), 1500)
+    if (!yaEnCarrito) agregar(producto)
   }
 
   return (
@@ -118,13 +117,13 @@ function ProductCard({ producto }) {
               <button
                 onClick={handleAgregar}
                 className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                  agregado
-                    ? 'bg-green-500 scale-95'
+                  yaEnCarrito
+                    ? 'bg-green-500'
                     : 'bg-amber-400 hover:bg-amber-300'
                 }`}
-                title="Agregar al carrito"
+                title={yaEnCarrito ? 'Ya en carrito' : 'Agregar al carrito'}
               >
-                {agregado ? (
+                {yaEnCarrito ? (
                   <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12"/>
                   </svg>
