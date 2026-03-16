@@ -34,4 +34,13 @@ router.get('/products/:id',async (req,res)=>{
     res.status(500).json({error: error.message})
   }
 })
+// routes/products.js
+router.get('/products/:id/existencia', async (req, res) => {
+  try {
+    const { data } = await syscomAPI.get(`/productos/${req.params.id}/existencia`)
+    res.json(data)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
 module.exports = router
