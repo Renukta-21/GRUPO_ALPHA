@@ -118,7 +118,7 @@ export default function CartDrawer() {
             </div>
             <p className="text-gray-500 text-xs text-center">IVA incluido</p>
             <button
-              onClick={irACheckout}
+              /* onClick={irACheckout} */
               className="w-full bg-amber-400 hover:bg-amber-300 text-black font-bold text-sm py-3 rounded-xl transition-colors"
             >
               Proceder al pago →
