@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import DisponibilidadModal from './DisponibilidadModal'
+import { useCart } from '../hooks/useCart'
 
 export default function ProductoDetalle() {
   const { id } = useParams()
@@ -57,8 +58,6 @@ export default function ProductoDetalle() {
 
   return (
     <div className="w-full text-white pb-16">
-
-      {/* Modal disponibilidad */}
       {showDisponibilidad && (
         <DisponibilidadModal
           productoId={id}
@@ -67,7 +66,6 @@ export default function ProductoDetalle() {
         />
       )}
 
-      {/* Botón volver */}
       <button
         onClick={() => navigate(-1)}
         className="flex items-center gap-1 text-gray-400 hover:text-white text-sm mb-4 transition-colors"
@@ -105,7 +103,6 @@ export default function ProductoDetalle() {
             </div>
           )}
         </div>
-
         <InfoProducto
           producto={producto}
           onVerDisponibilidad={() => setShowDisponibilidad(true)}
@@ -125,7 +122,6 @@ export default function ProductoDetalle() {
             </button>
           ))}
         </div>
-
         <div className="flex-1 bg-slate-800 rounded-xl overflow-hidden flex items-center justify-center" style={{ minHeight: '320px', maxHeight: '420px' }}>
           <img
             key={imagenActiva}
@@ -135,7 +131,6 @@ export default function ProductoDetalle() {
             style={{ maxHeight: '420px' }}
           />
         </div>
-
         <div className="flex-1">
           <InfoProducto
             producto={producto}
@@ -148,6 +143,19 @@ export default function ProductoDetalle() {
 }
 
 function InfoProducto({ producto, onVerDisponibilidad }) {
+  const { agregar, setOpen } = useCart()
+  const [cantidad, setCantidad] = useState(1)
+  const [agregado, setAgregado] = useState(false)
+
+  const handleAgregar = () => {
+    agregar(producto, cantidad)
+    setAgregado(true)
+    setTimeout(() => {
+      setAgregado(false)
+      setOpen(true)   // abre el drawer automáticamente
+    }, 800)
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <div>
@@ -162,13 +170,56 @@ function InfoProducto({ producto, onVerDisponibilidad }) {
       {/* Precio */}
       <div className="flex items-baseline gap-3">
         <span className="text-blue-400 text-3xl font-bold">
-          ${parseFloat(producto.precios.precio_especial).toFixed(2)}
+          ${parseFloat(producto.precios.precio_descuento).toFixed(2)}
         </span>
         {producto.precios.precio_lista !== producto.precios.precio_especial && (
           <span className="text-gray-500 text-sm line-through">
-            ${parseFloat(producto.precios.precio_lista).toFixed(2)}
+            ${parseFloat(producto.precios.precio_lista).toFixed(2)} precio lista
           </span>
         )}
+      </div>
+
+      {/* Selector de cantidad + botón agregar */}
+      <div className="flex items-center gap-3">
+        {/* Cantidad */}
+        <div className="flex items-center border border-white/10 rounded-lg overflow-hidden">
+          <button
+            onClick={() => setCantidad(q => Math.max(1, q - 1))}
+            className="w-9 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            −
+          </button>
+          <span className="w-10 text-center text-white text-sm font-medium">{cantidad}</span>
+          <button
+            onClick={() => setCantidad(q => q + 1)}
+            className="w-9 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            +
+          </button>
+        </div>
+
+        {/* Agregar al carrito */}
+        <button
+          onClick={handleAgregar}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all ${
+            agregado
+              ? 'bg-green-500 text-white scale-95'
+              : 'bg-amber-400 hover:bg-amber-300 text-black'
+          }`}
+        >
+          {agregado ? (
+            <>
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              ¡Agregado!
+            </>
+          ) : (
+            <>
+              🛒 Agregar al carrito
+            </>
+          )}
+        </button>
       </div>
 
       {producto.caracteristicas?.length > 0 && (
@@ -193,22 +244,17 @@ function InfoProducto({ producto, onVerDisponibilidad }) {
         )}
       </div>
 
-      {/* Botones */}
-      <div className="flex gap-2 pt-1">
-        <button
-          onClick={onVerDisponibilidad}
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors"
-        >
-          🏬 Ver disponibilidad
-        </button>
-        {/* <button className="flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white text-sm font-medium rounded-lg transition-colors">
-          🛒 Agregar
-        </button> */}
-      </div>
+      {/* Botón disponibilidad */}
+      <button
+        onClick={onVerDisponibilidad}
+        className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors w-fit"
+      >
+        🏬 Ver disponibilidad
+      </button>
 
       {/* Recursos */}
       {producto.recursos?.length > 0 && (
-        <div className="flex flex-wrap gap-2 pt-2">
+        <div className="flex flex-wrap gap-2">
           {producto.recursos.map((r, i) => (
             <a key={i} href={r.path} target="_blank" rel="noopener noreferrer"
               className="text-xs px-3 py-1.5 rounded-full border border-slate-600 text-gray-300 hover:border-blue-500 hover:text-blue-400 transition-colors"

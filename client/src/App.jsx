@@ -4,10 +4,11 @@ import Navbar from './components/NavbarTop'
 import Searchbar from './components/Searchbar'
 import Productos from './pages/Productos'
 import ProductoDetalle from './components/ProductoDetalle'
+import CartDrawer from './components/CartDrawer'
+import { CartProvider } from './hooks/useCart.jsx'
 
 function AppContent() {
   const [searchQuery, setSearchQuery] = useState('')
-  const location = useLocation()
 
   const handleSearch = (val) => {
     setSearchQuery(val)
@@ -21,19 +22,13 @@ function AppContent() {
       </div>
 
       <Routes>
-        <Route
-          path="/"
-          element={<Productos searchQuery={searchQuery} />}
-        />
-        <Route
-          path="/productos"
-          element={<Productos searchQuery={searchQuery} />}
-        />
-        <Route
-          path="/producto/:id"
-          element={<ProductoDetalle />}
-        />
+        <Route path="/"            element={<Productos searchQuery={searchQuery} />} />
+        <Route path="/productos"   element={<Productos searchQuery={searchQuery} />} />
+        <Route path="/producto/:id" element={<ProductoDetalle />} />
       </Routes>
+
+      {/* Drawer del carrito — siempre montado, se muestra/oculta con open */}
+      <CartDrawer />
     </div>
   )
 }
@@ -41,7 +36,9 @@ function AppContent() {
 function App() {
   return (
     <BrowserRouter>
-      <AppContent />
+      <CartProvider>
+        <AppContent />
+      </CartProvider>
     </BrowserRouter>
   )
 }

@@ -39,7 +39,7 @@ function Productos() {
           >
             <img src={p.img_portada} alt={p.titulo} className="w-full" />
             <p className="mt-2 text-sm">{p.titulo}</p>
-            <p className="text-blue-400">${p.precios.precio_especial}</p>
+            <p className="text-blue-400">${p.precios.precio_descuento}</p>
           </div>
         ))}
       </div>

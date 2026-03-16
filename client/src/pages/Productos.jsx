@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import DisponibilidadModal from '../components/DisponibilidadModal'
+import { useCart } from '../hooks/useCart'
+import carrito from '../assets/carrito.png'
 
 function useDebounce(value, delay) {
   const [debounced, setDebounced] = useState(value)
@@ -49,11 +51,19 @@ function Breadcrumb({ items }) {
 
 function ProductCard({ producto }) {
   const navigate = useNavigate()
+  const { agregar, setOpen } = useCart()
   const [modalProducto, setModalProducto] = useState(null)
+  const [agregado, setAgregado] = useState(false)
+
+  const handleAgregar = (e) => {
+    e.stopPropagation()
+    agregar(producto)
+    setAgregado(true)
+    setTimeout(() => setAgregado(false), 1500)
+  }
 
   return (
     <>
-      {/* Modal — solo se monta si se abrió desde esta card */}
       {modalProducto && (
         <DisponibilidadModal
           productoId={modalProducto.producto_id}
@@ -87,22 +97,42 @@ function ProductCard({ producto }) {
               )}
             </div>
 
-            {/* Botón azul de disponibilidad */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation() // evita navegar al detalle
-                setModalProducto(producto)
-              }}
-              className="flex-shrink-0 w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-500 flex items-center justify-center transition-colors"
-              title="Ver disponibilidad"
-            >
-              {/* ícono de caja/stock */}
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                <line x1="12" y1="22.08" x2="12" y2="12"/>
-              </svg>
-            </button>
+            <div className="flex items-center gap-2">
+              {/* Disponibilidad */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setModalProducto(producto)
+                }}
+                className="flex-shrink-0 w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-500 flex items-center justify-center transition-colors"
+                title="Ver disponibilidad"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                  <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+              </button>
+
+              {/* Agregar al carrito */}
+              <button
+                onClick={handleAgregar}
+                className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
+                  agregado
+                    ? 'bg-green-500 scale-95'
+                    : 'bg-amber-400 hover:bg-amber-300'
+                }`}
+                title="Agregar al carrito"
+              >
+                {agregado ? (
+                  <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                ) : (
+                  <img src={carrito} alt="carrito" className="w-5 invert" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
