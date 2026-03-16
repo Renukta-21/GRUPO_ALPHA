@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import DisponibilidadModal from './DisponibilidadModal'
 
 export default function ProductoDetalle() {
   const { id } = useParams()
@@ -8,6 +9,7 @@ export default function ProductoDetalle() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [imagenActiva, setImagenActiva] = useState(0)
+  const [showDisponibilidad, setShowDisponibilidad] = useState(false)
 
   useEffect(() => {
     setLoading(true)
@@ -56,6 +58,15 @@ export default function ProductoDetalle() {
   return (
     <div className="w-full text-white pb-16">
 
+      {/* Modal disponibilidad */}
+      {showDisponibilidad && (
+        <DisponibilidadModal
+          productoId={id}
+          existencia={producto.existencia}
+          onClose={() => setShowDisponibilidad(false)}
+        />
+      )}
+
       {/* Botón volver */}
       <button
         onClick={() => navigate(-1)}
@@ -64,10 +75,8 @@ export default function ProductoDetalle() {
         ← Volver
       </button>
 
-      {/* ── MÓVIL: slider full width ── */}
+      {/* ── MÓVIL ── */}
       <div className="md:hidden flex flex-col gap-4">
-
-        {/* Slider */}
         <div className="relative bg-slate-800 rounded-xl overflow-hidden">
           <img
             key={imagenActiva}
@@ -75,65 +84,41 @@ export default function ProductoDetalle() {
             alt={producto.titulo}
             className="w-full h-72 object-contain p-4"
           />
-
-          {/* Flechas */}
           {total > 1 && (
             <>
-              <button
-                onClick={prev}
-                className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 flex items-center justify-center text-white text-xl hover:bg-black/70 transition"
-              >
-                ‹
-              </button>
-              <button
-                onClick={next}
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 flex items-center justify-center text-white text-xl hover:bg-black/70 transition"
-              >
-                ›
-              </button>
+              <button onClick={prev} className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 flex items-center justify-center text-white text-xl hover:bg-black/70 transition">‹</button>
+              <button onClick={next} className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 flex items-center justify-center text-white text-xl hover:bg-black/70 transition">›</button>
             </>
           )}
-
-          {/* Contador */}
           {total > 1 && (
             <div className="absolute bottom-3 left-3 bg-black/50 text-white text-xs px-2 py-0.5 rounded-full">
               {imagenActiva + 1} / {total}
             </div>
           )}
-
-          {/* Dots */}
           {total > 1 && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
               {imagenesUnicas.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setImagenActiva(i)}
-                  className={`h-2 rounded-full transition-all ${
-                    i === imagenActiva ? 'bg-blue-400 w-4' : 'bg-white/40 w-2'
-                  }`}
+                <button key={i} onClick={() => setImagenActiva(i)}
+                  className={`h-2 rounded-full transition-all ${i === imagenActiva ? 'bg-blue-400 w-4' : 'bg-white/40 w-2'}`}
                 />
               ))}
             </div>
           )}
         </div>
 
-        {/* Info móvil */}
-        <InfoProducto producto={producto} />
+        <InfoProducto
+          producto={producto}
+          onVerDisponibilidad={() => setShowDisponibilidad(true)}
+        />
       </div>
 
-      {/* ── DESKTOP: miniaturas | imagen | info ── */}
+      {/* ── DESKTOP ── */}
       <div className="hidden md:flex gap-4 items-start">
-
-        {/* Miniaturas */}
         <div className="flex flex-col gap-2 w-14 flex-shrink-0">
           {imagenesUnicas.map((url, i) => (
-            <button
-              key={i}
-              onClick={() => setImagenActiva(i)}
+            <button key={i} onClick={() => setImagenActiva(i)}
               className={`w-14 h-14 rounded-lg overflow-hidden bg-white p-1 border-2 transition-all ${
-                imagenActiva === i
-                  ? 'border-blue-500 opacity-100'
-                  : 'border-transparent opacity-50 hover:opacity-80'
+                imagenActiva === i ? 'border-blue-500 opacity-100' : 'border-transparent opacity-50 hover:opacity-80'
               }`}
             >
               <img src={url} alt={`img-${i}`} className="w-full h-full object-contain" />
@@ -151,25 +136,23 @@ export default function ProductoDetalle() {
           />
         </div>
 
-        {/* Info desktop */}
         <div className="flex-1">
-          <InfoProducto producto={producto} />
+          <InfoProducto
+            producto={producto}
+            onVerDisponibilidad={() => setShowDisponibilidad(true)}
+          />
         </div>
       </div>
     </div>
   )
 }
 
-function InfoProducto({ producto }) {
+function InfoProducto({ producto, onVerDisponibilidad }) {
   return (
     <div className="flex flex-col gap-4">
       <div>
         {producto.marca_logo && (
-          <img
-            src={producto.marca_logo}
-            alt={producto.marca}
-            className="h-5 object-contain mb-2 opacity-70"
-          />
+          <img src={producto.marca_logo} alt={producto.marca} className="h-5 object-contain mb-2 opacity-70" />
         )}
         <h1 className="text-white font-bold text-lg leading-snug">
           {producto.titulo}
@@ -187,6 +170,7 @@ function InfoProducto({ producto }) {
           </span>
         )}
       </div>
+
       {producto.caracteristicas?.length > 0 && (
         <ul className="flex flex-col gap-1.5">
           {producto.caracteristicas.map((c, i) => (
@@ -209,15 +193,24 @@ function InfoProducto({ producto }) {
         )}
       </div>
 
+      {/* Botones */}
+      <div className="flex gap-2 pt-1">
+        <button
+          onClick={onVerDisponibilidad}
+          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors"
+        >
+          🏬 Ver disponibilidad
+        </button>
+        <button className="flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white text-sm font-medium rounded-lg transition-colors">
+          🛒 Agregar
+        </button>
+      </div>
+
       {/* Recursos */}
       {producto.recursos?.length > 0 && (
         <div className="flex flex-wrap gap-2 pt-2">
           {producto.recursos.map((r, i) => (
-            <a
-              key={i}
-              href={r.path}
-              target="_blank"
-              rel="noopener noreferrer"
+            <a key={i} href={r.path} target="_blank" rel="noopener noreferrer"
               className="text-xs px-3 py-1.5 rounded-full border border-slate-600 text-gray-300 hover:border-blue-500 hover:text-blue-400 transition-colors"
             >
               {r.recurso.replace(/_/g, ' ')}
@@ -234,9 +227,7 @@ function MetaRow({ icon, label, value, highlight }) {
     <div className="flex items-center gap-2 text-sm">
       <span className="text-gray-500 w-4 text-center text-xs">{icon}</span>
       <span className="text-gray-400">{label}:</span>
-      <span className={highlight ? 'text-blue-400 font-medium' : 'text-gray-200'}>
-        {value}
-      </span>
+      <span className={highlight ? 'text-blue-400 font-medium' : 'text-gray-200'}>{value}</span>
     </div>
   )
 }
