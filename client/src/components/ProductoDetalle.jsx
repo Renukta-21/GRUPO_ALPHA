@@ -147,8 +147,10 @@ function InfoProducto({ producto, onVerDisponibilidad }) {
   const [cantidad, setCantidad] = useState(1)
 
   const yaEnCarrito = items.some(i => i.producto_id === producto.producto_id)
+  const sinStock = !producto.total_existencia || producto.total_existencia === 0
 
   const handleAgregar = () => {
+    if (sinStock) return
     if (yaEnCarrito) {
       setOpen(true)
       return
@@ -180,45 +182,51 @@ function InfoProducto({ producto, onVerDisponibilidad }) {
         )}
       </div>
 
-      {/* Selector de cantidad + botón agregar */}
+      {/* Selector cantidad + botón */}
       <div className="flex items-center gap-3">
-        {/* Cantidad */}
         <div className="flex items-center border border-white/10 rounded-lg overflow-hidden">
           <button
             onClick={() => setCantidad(q => Math.max(1, q - 1))}
-            className="w-9 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+            disabled={sinStock}
+            className="w-9 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors disabled:opacity-40"
           >
             −
           </button>
           <span className="w-10 text-center text-white text-sm font-medium">{cantidad}</span>
           <button
             onClick={() => setCantidad(q => q + 1)}
-            className="w-9 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+            disabled={sinStock}
+            className="w-9 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors disabled:opacity-40"
           >
             +
           </button>
         </div>
 
-        {/* Agregar al carrito */}
-        <button
-          onClick={handleAgregar}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all ${
-            yaEnCarrito
-              ? 'bg-green-500 text-white'
-              : 'bg-amber-400 hover:bg-amber-300 text-black'
-          }`}
-        >
-          {yaEnCarrito ? (
-            <>
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-              Ver carrito
-            </>
-          ) : (
-            <>🛒 Agregar al carrito</>
-          )}
-        </button>
+        {sinStock ? (
+          <div className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-700 text-gray-500 text-sm font-medium">
+            Sin stock
+          </div>
+        ) : (
+          <button
+            onClick={handleAgregar}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all ${
+              yaEnCarrito
+                ? 'bg-green-500 text-white'
+                : 'bg-amber-400 hover:bg-amber-300 text-black'
+            }`}
+          >
+            {yaEnCarrito ? (
+              <>
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Ver carrito
+              </>
+            ) : (
+              <>🛒 Agregar al carrito</>
+            )}
+          </button>
+        )}
       </div>
 
       {producto.caracteristicas?.length > 0 && (

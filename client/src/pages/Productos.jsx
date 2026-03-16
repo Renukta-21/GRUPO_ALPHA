@@ -55,10 +55,11 @@ function ProductCard({ producto }) {
   const [modalProducto, setModalProducto] = useState(null)
 
   const yaEnCarrito = items.some(i => i.producto_id === producto.producto_id)
+  const sinStock = !producto.total_existencia || producto.total_existencia === 0
 
   const handleAgregar = (e) => {
     e.stopPropagation()
-    if (!yaEnCarrito) agregar(producto)
+    if (!yaEnCarrito && !sinStock) agregar(producto)
   }
 
   return (
@@ -114,23 +115,27 @@ function ProductCard({ producto }) {
               </button>
 
               {/* Agregar al carrito */}
-              <button
-                onClick={handleAgregar}
-                className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                  yaEnCarrito
-                    ? 'bg-green-500'
-                    : 'bg-amber-400 hover:bg-amber-300'
-                }`}
-                title={yaEnCarrito ? 'Ya en carrito' : 'Agregar al carrito'}
-              >
-                {yaEnCarrito ? (
-                  <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                ) : (
-                  <img src={carrito} alt="carrito" className="w-5 invert" />
-                )}
-              </button>
+              {sinStock ? (
+                <span className="flex-shrink-0 px-2 py-1 rounded-lg bg-slate-700 text-gray-500 text-xs font-medium">
+                  Sin stock
+                </span>
+              ) : (
+                <button
+                  onClick={handleAgregar}
+                  className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
+                    yaEnCarrito ? 'bg-green-500' : 'bg-amber-400 hover:bg-amber-300'
+                  }`}
+                  title={yaEnCarrito ? 'Ya en carrito' : 'Agregar al carrito'}
+                >
+                  {yaEnCarrito ? (
+                    <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  ) : (
+                    <img src={carrito} alt="carrito" className="w-5 invert" />
+                  )}
+                </button>
+              )}
             </div>
           </div>
         </div>
